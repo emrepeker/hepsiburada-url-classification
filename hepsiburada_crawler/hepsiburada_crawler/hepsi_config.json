@@ -1,0 +1,105 @@
+{
+  "db": {
+    "table": "linkstesttest",
+    "unique_key": "normalized_url",
+    "buffer_size": 200,
+    "create_table": true
+  },
+
+  "columns": {
+    "url": "url",
+    "normalized_url": "normalized_url",
+    "anchor_text": "anchor_text",
+    "rel": "rel",
+    "is_external": "is_external",
+    "discovered_at": "discovered_at"
+  },
+
+  "spider": {
+    "name": "hepsi_url_spider",
+    "domain": ["hepsiburada.com"],
+    "start_urls": ["https://www.hepsiburada.com/"]
+  },
+
+  "classification": {
+    "table": "linkstesttest",
+    "url_col": "url",
+    "only_update_nulls": true,
+    "csv_out": "urls_with_categories_from_db.csv",
+    "patterns": [
+      {
+        "label": "product",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/.+-p-[a-z0-9]+(?:[/?].*)?$",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "category",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/.+-c-\\d+(?:/|$|\\?.*)",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "campaign",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/kampanyalar(?:/|$|\\?.*)",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "seller_store",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/magaza/[^/?#]+(?:[/?].*)?$",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "brand",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/marka/[^/?#]+(?:[/?].*)?$",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "help",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/yardim(?:/|$|\\?.*)",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "policy",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/(?:gizlilik|kvkk|kisisel-veri|sozlesme|iade|kargo|teslimat)[^?#]*(?:[?#].*)?$",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "search",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/(?:ara|search)(?:/|$|\\?.*)",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "account",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/(?:uyelik|giris|hesabim|sifre)[^?#]*(?:[?#].*)?$",
+        "flags": ["IGNORECASE"]
+      },
+      {
+        "label": "home",
+        "pattern": "^https?://(?:www\\.)?hepsiburada\\.com/?$",
+        "flags": ["IGNORECASE"]
+      }
+    ]
+  },
+
+  "relabel": {
+    "table": "linkstesttest",
+    "select_where_other_sql": "COALESCE(pred_category, 'other') = 'other'",
+    "batch_size": 100,
+    "max_batches": 0,
+    "openai_model": "gpt-4o-mini",
+    "taxonomy": [
+      "product",
+      "campaign",
+      "brand",
+      "seller_store",
+      "policy",
+      "search_results",
+      "blog_article",
+      "help_center",
+      "login",
+      "cart_or_checkout",
+      "homepage",
+      "about_or_contact",
+      "other"
+    ]
+  }
+}

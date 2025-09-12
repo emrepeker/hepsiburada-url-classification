@@ -1,0 +1,6 @@
+# Ignore Python virtual environments
+venv/
+.venv/
+env/
+ENV/
+C:\hepsiburada_project\hepsiburada_crawler\.env
